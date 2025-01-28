@@ -98,16 +98,18 @@ public:
     }
 
     void PushBack(const Type& item) {
+        size_t new_capacity = capacity_;
         if (size_ == capacity_) {
-            size_t new_capacity = capacity_ == 0 ? 1 : capacity_ * 2;
+            new_capacity = capacity_ == 0 ? 1 : capacity_ * 2;
             Reserve(new_capacity);
         }
         items_[size_++] = item;
     }
 
     void PushBack(Type&& item) {
+        size_t new_capacity = capacity_;
         if (size_ == capacity_) {
-            size_t new_capacity = capacity_ == 0 ? 1 : capacity_ * 2;
+            new_capacity = capacity_ == 0 ? 1 : capacity_ * 2;
             Reserve(new_capacity);
         }
         items_[size_++] = std::move(item);
@@ -116,9 +118,10 @@ public:
     Iterator Insert(ConstIterator pos, const Type& value) {
         assert(pos >= begin() && pos <= end());
         size_t index = pos - begin();
+        size_t new_capacity = capacity_;
         
         if (size_ == capacity_) {
-            size_t new_capacity = capacity_ == 0 ? 1 : capacity_ * 2;
+            new_capacity = capacity_ == 0 ? 1 : capacity_ * 2;
             ArrayPtr<Type> new_items(new_capacity);
             
             std::move(begin(), begin() + index, new_items.Get());
@@ -139,9 +142,10 @@ public:
     Iterator Insert(ConstIterator pos, Type&& value) {
         assert(pos >= begin() && pos <= end());
         size_t index = pos - begin();
+        size_t new_capacity = capacity_;
         
         if (size_ == capacity_) {
-            size_t new_capacity = capacity_ == 0 ? 1 : capacity_ * 2;
+            new_capacity = capacity_ == 0 ? 1 : capacity_ * 2;
             ArrayPtr<Type> new_items(new_capacity);
             
             std::move(begin(), begin() + index, new_items.Get());

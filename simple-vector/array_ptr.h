@@ -2,28 +2,26 @@
 #include <cassert>
 #include <cstdlib>
 #include <algorithm>
+#include <utility>
 
 template <typename Type>
 class ArrayPtr {
 public:
     ArrayPtr() = default;
 
-    explicit ArrayPtr(size_t size) {
-        if (size > 0) {
-            raw_ptr_ = new Type[size]();
-        }
+    explicit ArrayPtr(size_t size)
+        : raw_ptr_(size == 0 ? nullptr : new Type[size]()) {
     }
 
-    explicit ArrayPtr(Type* raw_ptr) noexcept {
-        raw_ptr_ = raw_ptr;
+    explicit ArrayPtr(Type* raw_ptr) noexcept 
+        : raw_ptr_(raw_ptr) {
     }
 
     ArrayPtr(const ArrayPtr&) = delete;
     ArrayPtr& operator=(const ArrayPtr&) = delete;
     
     ArrayPtr(ArrayPtr&& other) noexcept {
-        raw_ptr_ = other.raw_ptr_;
-        other.raw_ptr_ = nullptr;
+        std::swap(raw_ptr_, other.raw_ptr_);
     }
     
     ArrayPtr& operator=(ArrayPtr&& other) noexcept {
@@ -40,9 +38,7 @@ public:
     }
 
     Type* Release() noexcept {
-        Type* ptr = raw_ptr_;
-        raw_ptr_ = nullptr;
-        return ptr;
+        return std::exchange(raw_ptr_, nullptr);
     }
 
     Type& operator[](size_t index) noexcept {
